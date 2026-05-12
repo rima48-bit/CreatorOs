@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CreatorOS Service Hub</title>
+    <style>
+        :root {
+            --bg: #070f22;
+            --bg-2: #0f1b38;
+            --card: #0f1a33;
+            --text: #e5e7eb;
+            --muted: #9ca3af;
+            --accent: #38bdf8;
+            --available: #22c55e;
+            --soon: #f59e0b;
+            --border: #20304f;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background:
+                radial-gradient(1000px 360px at 50% -50px, #1e3a8a55, transparent 65%),
+                radial-gradient(700px 240px at 85% 0%, #0ea5e955, transparent 70%),
+                linear-gradient(180deg, var(--bg-2), var(--bg));
+            color: var(--text);
+            padding: 2.5rem 1rem 3rem;
+        }
+
+        .container {
+            max-width: 1120px;
+            margin: 0 auto;
+        }
+
+        .heading {
+            text-align: center;
+            margin: 0 auto 2.2rem;
+            max-width: 760px;
+            padding: 1.5rem;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background: linear-gradient(180deg, #132446cc, #0f1a33aa);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.25);
+            animation: fadeUp 0.65s ease both;
+        }
+
+        .heading h1 {
+            margin: 0;
+            letter-spacing: 0.2px;
+            font-size: clamp(1.9rem, 4vw, 2.7rem);
+        }
+
+        .heading p {
+            margin: 0.7rem 0 0;
+            color: var(--muted);
+            font-size: 1.02rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+            gap: 1.1rem;
+        }
+
+        .card {
+            background: linear-gradient(180deg, #0f1a33ee, #0d1630ee);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.05rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 205px;
+            box-shadow: 0 16px 28px rgba(3, 7, 18, 0.35);
+            transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+            opacity: 0;
+            animation: fadeUp 0.55s ease both;
+            animation-delay: var(--delay, 0s);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: #355380;
+            box-shadow: 0 20px 30px rgba(3, 7, 18, 0.45);
+        }
+
+        .badge {
+            align-self: flex-start;
+            border-radius: 999px;
+            padding: 0.22rem 0.58rem;
+            font-size: 0.74rem;
+            font-weight: 700;
+            margin-bottom: 0.7rem;
+        }
+
+        .badge.available {
+            color: #052e16;
+            background: var(--available);
+        }
+
+        .badge.coming_soon {
+            color: #451a03;
+            background: var(--soon);
+        }
+
+        h2 {
+            margin: 0 0 0.45rem 0;
+            font-size: 1.32rem;
+            line-height: 1.2;
+        }
+
+        .desc {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .cta {
+            margin-top: 1rem;
+            display: inline-block;
+            text-align: center;
+            border-radius: 11px;
+            text-decoration: none;
+            padding: 0.68rem 0.82rem;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .cta.available {
+            color: #052e16;
+            background: linear-gradient(180deg, #67e8f9, var(--accent));
+            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .cta.available:hover {
+            filter: brightness(1.03);
+        }
+
+        .cta.coming_soon {
+            color: #fef3c7;
+            border: 1px dashed #f59e0b;
+            background: rgba(245, 158, 11, 0.08);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .heading,
+            .card {
+                animation: none;
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding-top: 1.25rem;
+            }
+
+            .heading {
+                padding: 1.2rem;
+                margin-bottom: 1.4rem;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heading">
+            <h1>CreatorOS Service Hub</h1>
+            <p>One place to access every service and function.</p>
+        </div>
+
+        <section class="grid">
+            <% services.forEach((service, index) => { %>
+                <article class="card" style="--delay: <%= (0.08 * (index + 1)).toFixed(2) %>s;">
+                    <span class="badge <%= service.status %>">
+                        <%= service.status === 'available' ? 'Available' : 'Coming soon' %>
+                    </span>
+                    <h2><%= service.name %></h2>
+                    <p class="desc"><%= service.description %></p>
+                    <a class="cta <%= service.status %>" href="<%= service.route %>">
+                        <%= service.status === 'available' ? 'Open service' : 'View placeholder' %>
+                    </a>
+                </article>
+            <% }) %>
+        </section>
+    </div>
+</body>
+</html>
