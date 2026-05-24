@@ -194,4 +194,8 @@ app.get('/u/:shortId', async (req, res) => {
 //     console.log(`Server is running on http://localhost:${port}`);
 // });
 
+// Centralized error handler
+const errorHandler = require('./middleware/errorHandler');
+app.use(errorHandler);
+
 module.exports = app;
