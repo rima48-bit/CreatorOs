@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=CreaterOS&fontSize=72&fontColor=fff&animation=twinkling&fontAlignY=32&desc=The%20Operating%20System%20for%20Creators&descAlignY=56&descSize=20&descColor=ffffff" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=180&section=header&text=CreatorOs&fontSize=72&fontColor=fff&animation=twinkling&fontAlignY=32&desc=The%20Operating%20System%20for%20Creators&descAlignY=56&descSize=20&descColor=ffffff" width="100%"/>
 
 <br/>
 
@@ -51,11 +51,11 @@ Every creator knows this chaos:
 
 **That's 6+ apps, 6+ subscriptions, 6+ logins — just to run your creator business.**
 
-CreaterOS ends this. One platform. Everything connected. Zero context-switching.
+CreatorOs ends this. One platform. Everything connected. Zero context-switching.
 
 ---
 
-## ✨ What CreaterOS Does
+## ✨ What CreatorOs Does
 
 <table>
 <tr>
@@ -154,10 +154,10 @@ npm >= 9.0.0
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/crateros.git
+git clone https://github.com/yourusername/CreatorOs.git
 
 # Navigate into the project
-cd crateros
+cd CreatorOs
 
 # Install dependencies
 npm install
@@ -167,6 +167,11 @@ cp .env.example .env.local
 ```
 
 ### Environment Setup
+
+> [!IMPORTANT]
+> The following variables are **strictly required** to run the application:
+> 1. **`MONGODB_URI`**: Required to connect to your database. Without this, the app cannot store user accounts or persistent data.
+> 2. **`JWT_SECRET`**: Required for security. It's used to sign the tokens that keep users logged in.
 
 ```env
 # Auth
@@ -192,7 +197,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### Run Locally
 
 ```bash
-# Start the development server
+# Create the required local env file, then start the development server
 npm run dev
 
 # Open in browser
@@ -204,7 +209,7 @@ open http://localhost:3000
 ## 📁 Project Structure
 
 ```
-crateros/
+CreatorOs/
 ├── 📂 app/                    # Next.js App Router
 │   ├── 📂 (auth)/             # Auth pages (login, signup)
 │   ├── 📂 (dashboard)/        # Main dashboard routes
@@ -233,7 +238,7 @@ crateros/
 
 </div>
 
-If you're building an audience and monetizing your knowledge — CreaterOS is your control center.
+If you're building an audience and monetizing your knowledge — CreatorOs is your control center.
 
 ---
 
@@ -297,6 +302,42 @@ Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information
 
 ---
 
+## 🌟 Our Contributors
+
+We're proud to be part of **GSSoC 2026** 🚀. This project is built by our amazing community of contributors who share the vision of empowering creators worldwide.
+
+<div align="center">
+
+### Meet Our Community
+
+<a href="https://github.com/aashutoshkumarbhardwaj/CreatorOs/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=aashutoshkumarbhardwaj/CreatorOs" alt="Contributors" style="max-width: 100%; border-radius: 10px;"/>
+</a>
+
+<br/>
+
+<a href="https://github.com/aashutoshkumarbhardwaj/CreatorOs/graphs/contributors">
+  <img src="https://img.shields.io/badge/View%20All%20Contributors-7C4DFF?style=for-the-badge" alt="View Contributors" />
+</a>
+
+### Want to Join Our Community?
+
+Every contribution, no matter how small, helps us build something amazing for creators. Here's how you can get involved:
+
+1. **Pick an Issue** - Browse our [open issues](https://github.com/aashutoshkumarbhardwaj/CreatorOs/issues) and find something that interests you
+2. **Fork & Create Branch** - Fork the repo and create a feature branch
+3. **Make Your Changes** - Implement your feature or fix
+4. **Submit PR** - Open a pull request with a clear description
+5. **Get Recognized** - Your contribution will be visible on this README! 🎉
+
+> 💡 **First time contributing?** Start with issues labeled `good first issue` or `help-wanted`. We're here to help!
+
+**Special Recognition:** This project is part of **[GSSoC (Girl Script Summer of Code) 2026](https://www.gssoc.girlscript.tech/)** — helping beginners and experienced developers contribute to open source.
+
+</div>
+
+---
+
 ## 📬 Connect
 
 <div align="center">
@@ -310,7 +351,7 @@ Distributed under the MIT License. See [`LICENSE`](LICENSE) for more information
 
 <br/>
 
-*If CreaterOS saves you time, give it a ⭐ — it means the world.*
+*If CreatorOs saves you time, give it a ⭐ — it means the world.*
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
 
