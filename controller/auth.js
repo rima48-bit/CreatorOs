@@ -5,7 +5,6 @@ const crypto = require("crypto");
 
 const CONTRIBUTOR_EMAIL = "contributor@creatoros.local";
 const CONTRIBUTOR_NAME = "Contributor";
-
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const GENERIC_LOGIN_ERROR = "Invalid email or password";
 
@@ -14,49 +13,48 @@ function wantsHtml(req) {
     return accept.includes("text/html");
 }
 
-const createAuthToken = (user) => {
-    return jwt.sign(
-        {
-            id: user._id,
-        },
-        process.env.JWT_SECRET,
-        {
-            expiresIn: "7d",
-        }
+function isGoogleAuthConfigured() {
+    return Boolean(
+        process.env.GOOGLE_CLIENT_ID &&
+        process.env.GOOGLE_CLIENT_SECRET &&
+        process.env.GOOGLE_CALLBACK_URL
     );
-};
+}
 
-const setAuthCookie = (res, token) => {
-    res.cookie("token", token, {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: process.env.NODE_ENV === "production",
-        maxAge: ONE_WEEK_MS,
-    });
-};
-
-const redirectWithLoginError = (res, error) => {
-    return res.redirect(`/login?error=${encodeURIComponent(error)}`);
-};
-function createToken(userId) {
+function createAuthToken(userId) {
     return jwt.sign(
         {
             id: userId,
         },
         process.env.JWT_SECRET,
         {
-            expiresIn: '7d',
+            expiresIn: "7d",
         }
     );
 }
 
 function setAuthCookie(res, token) {
-    res.cookie('token', token, {
+    res.cookie("token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: ONE_WEEK_MS,
     });
+}
+
+function redirectWithLoginError(res, error) {
+    return res.redirect(`/login?error=${encodeURIComponent(error)}`);
+}
+
+function renderLoginError(req, res) {
+    if (wantsHtml(req)) {
+        return res.status(401).render("login", {
+            error: GENERIC_LOGIN_ERROR,
+            googleAuthConfigured: isGoogleAuthConfigured(),
+        });
+    }
+
+    return res.status(401).json({ success: false, message: GENERIC_LOGIN_ERROR });
 }
 
 const signup = async (req, res, next) => {
@@ -99,30 +97,19 @@ const login = async (req, res, next) => {
         const user = await User.findOne({ email: normalizedEmail });
 
         if (!user || !user.password) {
-            if (wantsHtml(req)) {
-                return res.status(401).render("login", { error: GENERIC_LOGIN_ERROR, googleAuthConfigured: true });
-            }
-        const user = await User.findOne({ email });
-
-        const genericMessage = 'Invalid email or password';
-
-            return res.status(401).json({ success: false, message: GENERIC_LOGIN_ERROR });
+            return renderLoginError(req, res);
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            if (wantsHtml(req)) {
-                return res.status(401).render("login", { error: GENERIC_LOGIN_ERROR, googleAuthConfigured: true });
-            }
-
-            return res.status(401).json({ success: false, message: GENERIC_LOGIN_ERROR });
+            return renderLoginError(req, res);
         }
 
         user.lastLoginAt = new Date();
         await user.save();
 
-        const token = createAuthToken(user);
+        const token = createAuthToken(user._id);
         setAuthCookie(res, token);
 
         if (wantsHtml(req)) {
@@ -140,11 +127,8 @@ const handleGoogleCallback = async (req, res) => {
         if (!req.user) {
             return redirectWithLoginError(res, "Google sign-in was cancelled or could not be completed.");
         }
-        const token = createToken(user._id);
 
-        setAuthCookie(res, token);
-
-        const token = createAuthToken(req.user);
+        const token = createAuthToken(req.user._id);
         setAuthCookie(res, token);
 
         return res.redirect("/dashboard?login=google");
@@ -166,17 +150,23 @@ const loginAsContributor = async (req, res, next) => {
                 name: CONTRIBUTOR_NAME,
                 email: CONTRIBUTOR_EMAIL,
                 password: hashedPassword,
+                authProvider: "local",
             });
         }
 
-        const token = createToken(user._id);
+        user.lastLoginAt = new Date();
+        await user.save();
 
+        const token = createAuthToken(user._id);
         setAuthCookie(res, token);
 
-        if (wantsHtml(req)) return res.redirect('/dashboard');
-        return res.status(200).json({ success: true, message: 'Authenticated as contributor' });
+        if (wantsHtml(req)) {
+            return res.redirect("/dashboard");
+        }
+
+        return res.status(200).json({ success: true, message: "Authenticated as contributor" });
     } catch (error) {
-        next(error);
+        return next(error);
     }
 };
 

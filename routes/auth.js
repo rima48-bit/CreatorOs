@@ -2,7 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../model/user");
-const { signup, login, handleGoogleCallback } = require("../controller/auth");
+const { signup, login, handleGoogleCallback, loginAsContributor } = require("../controller/auth");
 const { signupValidator, loginValidator } = require("../middleware/validateAuth");
 
 const router = express.Router();
@@ -65,8 +65,6 @@ if (googleAuthConfigured) {
         )
     );
 }
-const { signup, login, loginAsContributor } = require("../controller/auth");
-const { signupValidator, loginValidator } = require("../middleware/validateAuth");
 
 router.get("/signup", (req, res) => {
     res.render("signup", { error: null });
@@ -87,6 +85,7 @@ router.get("/login", (req, res) => {
 });
 
 router.post("/login", loginValidator, login);
+router.post("/login/contributor", loginAsContributor);
 
 router.get("/auth/google", (req, res, next) => {
     if (!googleAuthConfigured) {
@@ -111,7 +110,6 @@ router.get("/auth/google/callback", (req, res, next) => {
         session: false,
     })(req, res, next);
 }, handleGoogleCallback);
-router.post("/login/contributor", loginAsContributor);
 
 router.get("/logout", (req, res) => {
     res.clearCookie("token");
