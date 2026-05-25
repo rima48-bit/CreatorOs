@@ -1,10 +1,37 @@
-require("dotenv").config();
+require("dotenv").config({ path: ".env.local" });
 const cookieParser = require("cookie-parser");
 const express = require('express');
+const path = require('path');
+
+// Validate required environment variables
+const requiredEnvVars = [
+    { name: 'MONGODB_URI', description: 'MongoDB connection string' },
+    { name: 'JWT_SECRET', description: 'Secret key for JWT token signing' },
+];
+
+const missingVars = requiredEnvVars.filter((v) => !process.env[v.name]);
+
+if (missingVars.length > 0) {
+    console.error('\n❌ Missing required environment variables:');
+    missingVars.forEach((v) => {
+        console.error(`   - ${v.name} (${v.description})`);
+    });
+    console.error('\n📋 To set them up:');
+    console.error('   1. Copy the example env file:');
+    console.error('      cp .env.example .env.local');
+    console.error('   2. Edit .env.local and fill in the values:');
+    console.error('      - MONGODB_URI: Your MongoDB connection string');
+    console.error('        (for local MongoDB: mongodb://localhost:27017/creatoros)');
+    console.error('      - JWT_SECRET: Generate a random secret');
+    console.error('        by running: openssl rand -base64 32');
+    console.error('   3. Run the server again:');
+    console.error('      npm run dev\n');
+    process.exit(1);
+}
 
 const app = express();
 
-const connectDB = require("./conect");
+const connectDB = require("./connect");
 const authRoutes = require("./routes/auth");
 const collaborationRoutes = require('./routes/collaboration');
 const { acceptInvite, acceptInviteFromDashboard } = require('./controller/collaborationController');
@@ -13,12 +40,14 @@ connectDB();
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
 app.set("view engine", "ejs");
+app.set('views', path.join(__dirname, 'view'));
+
 app.use("/", authRoutes);
 
 const protect = require("./middleware/auth");
 
-const path = require('path');
 const fs = require('fs');
 const shortid = require('shortid');
 const multer = require('multer');
@@ -26,7 +55,7 @@ const services = require('./services.config');
 const User = require('./model/user');
 const Invite = require('./model/invite');
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const urlRoutes = require('./routes/url');
 
 const suggestionRoutes = require('./routes/suggestionRoutes');
@@ -38,12 +67,6 @@ app.get('/invites/accept/:token', acceptInvite);
 // In-memory "database" to store URLs.
 // Note: This data will be lost when the server restarts.
 const urlDatabase = new Map();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'view'));
 
 app.use('/url', urlRoutes);
 
@@ -211,12 +234,14 @@ app.get('/u/:shortId', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
-
 // Centralized error handler
 const errorHandler = require('./middleware/errorHandler');
 app.use(errorHandler);
+
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Server is running on http://localhost:${port}`);
+    });
+}
 
 module.exports = app;

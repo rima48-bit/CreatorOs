@@ -168,6 +168,11 @@ cp .env.example .env.local
 
 ### Environment Setup
 
+> [!IMPORTANT]
+> The following variables are **strictly required** to run the application:
+> 1. **`MONGODB_URI`**: Required to connect to your database. Without this, the app cannot store user accounts or persistent data.
+> 2. **`JWT_SECRET`**: Required for security. It's used to sign the tokens that keep users logged in.
+
 ```env
 # Auth
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
@@ -192,7 +197,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### Run Locally
 
 ```bash
-# Start the development server
+# Create the required local env file, then start the development server
 npm run dev
 
 # Open in browser
