@@ -59,8 +59,7 @@ const userSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.model("User", userSchema);
-const MongooseUserModel = mongoose.model("User", userSchema);
+const MongooseUserModel = mongoose.models.User || mongoose.model("User", userSchema);
 
 // In-memory mock storage
 const mockUsers = [];
@@ -143,17 +142,9 @@ class MockUserModel {
     });
 })();
 
-module.exports = new Proxy({}, {
-    get(target, prop) {
-        if (process.env.USE_MOCK_DB === "true") {
-            return MockUserModel[prop] || MockUserModel;
-        }
-        return MongooseUserModel[prop];
-    },
-    construct(target, args) {
-        if (process.env.USE_MOCK_DB === "true") {
-            return new MockUserModel(...args);
-        }
-        return new MongooseUserModel(...args);
-    }
-});
+const UserModel =
+    process.env.USE_MOCK_DB === "true"
+        ? MockUserModel
+        : MongooseUserModel;
+
+module.exports = UserModel;
