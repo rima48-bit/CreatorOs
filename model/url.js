@@ -21,7 +21,7 @@ const urlSchema= new mongoose.Schema({
 
 const MongooseUrlModel = mongoose.model('Url', urlSchema);
 
-module.exports= Url;
+module.exports= MongooseUrlModel;
 // In-memory array for mock URLs
 const mockUrls = [];
 
