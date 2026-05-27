@@ -41,7 +41,7 @@ const inviteSchema = new mongoose.Schema(
   }
 );
 
-const MongooseInviteModel = mongoose.model('Invite', inviteSchema);
+const MongooseInviteModel = mongoose.models.Invite || mongoose.model('Invite', inviteSchema);
 
 const emptyInviteQuery = {
   sort() {

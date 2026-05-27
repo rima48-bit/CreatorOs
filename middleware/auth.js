@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
+const connectDB = require("../connect");
 
-const protect = (req, res, next) => {
+const protect = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization || "";
         const bearerToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
@@ -11,6 +12,8 @@ const protect = (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        await connectDB();
 
         req.user = decoded;
 
