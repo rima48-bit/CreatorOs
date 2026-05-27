@@ -40,6 +40,7 @@ const urlSchema = new mongoose.Schema({
 const MongooseUrlModel =
     mongoose.models.Url || mongoose.model("Url", urlSchema);
 
+module.exports= MongooseUrlModel;
 // In-memory array for mock URLs
 const mockUrls = [];
 
